@@ -21,21 +21,22 @@ This basically allows you to log/monitor any system call before it's executed.
 ```cpp
 engine::addHook("ZwOpenProcess", [](PCONTEXT pCtx, PVOID syscallRet) {
 
-		auto pHandle = engine::getParam1<PHANDLE>(pCtx);
-		auto accessMask = engine::getParam2<ACCESS_MASK>(pCtx);
-		auto objAttrs = engine::getParam3<POBJECT_ATTRIBUTES>(pCtx);
-		auto clientId = engine::getParam4<CLIENT_ID*>(pCtx);
+	auto pHandle = engine::getParam1<PHANDLE>(pCtx);
+	auto accessMask = engine::getParam2<ACCESS_MASK>(pCtx);
+	auto objAttrs = engine::getParam3<POBJECT_ATTRIBUTES>(pCtx);
+	auto clientId = engine::getParam4<CLIENT_ID*>(pCtx);
 		
-		printf("[*] Detected ZwOpenProcess Call..\n");
+	printf("[*] Detected ZwOpenProcess Call..\n");
+	printf("\tPHandle: 0x%p\n\tAccess Mask: %ld\n\tObject Attributes: 0x%p\n\tProcess Id: %ld\n", pHandle, accessMask, objAttrs,(DWORD)clientId->UniqueProcess);
 
-		if (hasFlag(accessMask, PROCESS_TERMINATE)) {
-			printf("[*] Found PROCESS_TERMINATE Flag, Removing it..\n");
-			accessMask &= ~PROCESS_TERMINATE;
+	if (hasFlag(accessMask, PROCESS_TERMINATE)) {
+		printf("[*] Found PROCESS_TERMINATE Flag, Removing it..\n");
+		accessMask &= ~PROCESS_TERMINATE;
 
-			engine::setParam2<ACCESS_MASK>(pCtx, accessMask);
-		}
+		engine::setParam2<ACCESS_MASK>(pCtx, accessMask);
+	}
 
-		engine::proceed(pCtx, syscallRet);
+	engine::proceed(pCtx, syscallRet);
 });
 ```
 
