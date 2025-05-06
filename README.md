@@ -46,13 +46,13 @@ engine::addHook("ZwAllocateVirtualMemory", [](PCONTEXT pCtx, PVOID syscallRet) {
 
         if (engine::detection::isDirectlyCalled(pCtx)) {
 
-                auto procHandle = engine::getParam1<HANDLE>(pCtx);
-                auto baseAddress = engine::getParam2<PVOID*>(pCtx);
-                auto pSize = engine::getParam4<PSIZE_T>(pCtx);
-                auto allocType = engine::getParam5<ULONG>(pCtx);
-                auto protection = engine::getParam6<ULONG>(pCtx);
+	   auto procHandle = engine::getParam1<HANDLE>(pCtx);
+	   auto baseAddress = engine::getParam2<PVOID*>(pCtx);
+	   auto pSize = engine::getParam4<PSIZE_T>(pCtx);
+	   auto allocType = engine::getParam5<ULONG>(pCtx);
+	   auto protection = engine::getParam6<ULONG>(pCtx);
 
-                printf("[!] Detected Suspicious ZwAllocateVirtualMemory Call (NTAPI / Direct Syscall / Indirect Syscall)\n");
+	   printf("[!] Detected Suspicious ZwAllocateVirtualMemory Call (NTAPI / Direct Syscall / Indirect Syscall)\n");
         }
         
         engine::proceed(pCtx, syscallRet);
