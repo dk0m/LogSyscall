@@ -21,7 +21,7 @@
     <ClCompile Include="src\pe\Pe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\hook\hook.cpp">
+    <ClCompile Include="src\engine\engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\instrument\tls\tls.cpp">
@@ -30,12 +30,24 @@
     <ClCompile Include="src\instrument\instrument.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\detection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\SuspiciousCall\SuspiciousCall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\SimpleHook\SimpleHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="examples\DirectSyscall\DirectSyscall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pe\Pe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\hook\hook.h">
+    <ClInclude Include="src\engine\engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\instrument\tls\tls.h">
@@ -44,12 +56,21 @@
     <ClInclude Include="src\instrument\instrument.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\instrument\ntapi\ntapi.h">
+    <ClInclude Include="examples\examples.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="examples\DirectSyscall\syswhispers\Syscalls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\instrument\structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="src\instrument\bridge.asm">
+      <Filter>Source Files</Filter>
+    </MASM>
+    <MASM Include="examples\DirectSyscall\syswhispers\Syscalls.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>

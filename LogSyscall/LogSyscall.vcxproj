@@ -130,20 +130,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="examples\DirectSyscall\DirectSyscall.cpp" />
+    <ClCompile Include="examples\SimpleHook\SimpleHook.cpp" />
+    <ClCompile Include="examples\SuspiciousCall\SuspiciousCall.cpp" />
     <ClCompile Include="LogSyscall.cpp" />
+    <ClCompile Include="src\engine\detection.cpp" />
     <ClCompile Include="src\instrument\instrument.cpp" />
     <ClCompile Include="src\instrument\tls\tls.cpp" />
     <ClCompile Include="src\pe\Pe.cpp" />
-    <ClCompile Include="src\hook\hook.cpp" />
+    <ClCompile Include="src\engine\engine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="examples\DirectSyscall\syswhispers\Syscalls.h" />
+    <ClInclude Include="examples\examples.h" />
     <ClInclude Include="src\instrument\instrument.h" />
-    <ClInclude Include="src\instrument\ntapi\ntapi.h" />
+    <ClInclude Include="src\instrument\structs.h" />
     <ClInclude Include="src\instrument\tls\tls.h" />
     <ClInclude Include="src\pe\Pe.h" />
-    <ClInclude Include="src\hook\hook.h" />
+    <ClInclude Include="src\engine\engine.h" />
   </ItemGroup>
   <ItemGroup>
+    <MASM Include="examples\DirectSyscall\syswhispers\Syscalls.asm" />
     <MASM Include="src\instrument\bridge.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

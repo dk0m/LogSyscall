@@ -4,8 +4,6 @@
 extern "C" void Callback(PCONTEXT ctx);
 extern "C" void bridge();
 
-static PVOID syscallRetAddr = NULL;
-
 void patchSyscall(PVOID syscallInstr) {
 	DWORD oldProtection;
 	VirtualProtect(syscallInstr, 2, PAGE_EXECUTE_READWRITE, &oldProtection);
@@ -18,14 +16,15 @@ void patchSyscall(PVOID syscallInstr) {
 LONG exceptionHandler(PEXCEPTION_POINTERS pExceptionInfo) {
 
 	if (pExceptionInfo->ExceptionRecord->ExceptionCode == EXCEPTION_BREAKPOINT) {
+		// TODO: add thread safety
 
 		DWORD ssn = (DWORD)pExceptionInfo->ContextRecord->Rax;
-		auto hookEntry = hookLookup::findHookEntryBySsn(ssn).value();
+		auto hookEntry = engine::findHookEntryBySsn(ssn).value();
 		auto hookData = hookEntry.hookData;
 
-		printf("[EH] Found Hook For Function '%s', SSN: %ld, Calling Hook..\n", hookEntry.targetFn.name, ssn);
+		printf("[VEH] Calling Hook for Function '%s'\n\tSyscall Service Number: %ld\n", hookEntry.targetFn.name, ssn);
 
-		hookData.hook(pExceptionInfo->ContextRecord, syscallRetAddr);
+		hookData.hook(pExceptionInfo->ContextRecord, logsyscall::syscallRetAddr);
 
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
@@ -61,12 +60,12 @@ void Callback(PCONTEXT ctx) {
 	DWORD ssn = 0;
 	WORD offset = 0;
 
-	while (true) {
+	while (offset <= STUB_SIZE) {
 
 		if (*(PBYTE)(returnAddr - offset) == 0x0f && *(PBYTE)(returnAddr - (offset - 1)) == 0x05) {
 			syscallInstr = (PVOID)(returnAddr - offset);
 
-			if (syscallInstr == syscallRetAddr) {
+			if (syscallInstr == logsyscall::syscallRetAddr) {
 				goto exit;
 			}
 
@@ -85,7 +84,7 @@ void Callback(PCONTEXT ctx) {
 	}
 
 	// this nt function has a hook
-	if (hookLookup::hasHookEntry(ssn)) {
+	if (engine::hasHookEntry(ssn)) {
 		patchSyscall(syscallInstr);
 	}
 
@@ -95,14 +94,16 @@ exit:
 }
 
 bool allocateRedirectStub() {
-	syscallRetAddr = VirtualAlloc(NULL, 3, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-	memcpy(syscallRetAddr, &logsyscall::patchSyscallRetArray[0], 3);
-	return syscallRetAddr != NULL;
+	logsyscall::syscallRetAddr = VirtualAlloc(NULL, 3, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	memcpy(logsyscall::syscallRetAddr, &logsyscall::patchSyscallRetArray[0], 3);
+	return logsyscall::syscallRetAddr != NULL;
 }
 
 void logsyscall::setVeh(PVECTORED_EXCEPTION_HANDLER exceptionHandler) {
 	AddVectoredExceptionHandler(1, exceptionHandler);
 }
+
+typeNtSetInformationProcess NtSetInformationProcess = (typeNtSetInformationProcess)GetProcAddress(GetModuleHandleA("NTDLL"), "NtSetInformationProcess");
 
 bool logsyscall::setIc() {
 	PROCESS_INSTRUMENTATION_CALLBACK_INFORMATION nirvana;
@@ -125,7 +126,6 @@ bool logsyscall::setIc() {
 bool logsyscall::run() {
 
 	if (!allocateRedirectStub()) {
-		printf("Failed To Allocate Redirect Stub.\n");
 		return false;
 	}
 
@@ -133,11 +133,9 @@ bool logsyscall::run() {
 	tls::initTlsValue();
 
 	if (logsyscall::setIc()) {
-		printf("Set Instrumention Callback Successfully.\n");
 		return true;
 	}
 	else {
-		printf("Failed To Set Instrumention Callback.\n");
 		return false;
 	}
 }
