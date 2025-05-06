@@ -14,16 +14,17 @@ void examples::runSuspiciousCall()
 
     engine::addHook("ZwAllocateVirtualMemory", [](PCONTEXT pCtx, PVOID syscallRet) {
 
-        auto procHandle = engine::getParam1<HANDLE>(pCtx);
-        auto baseAddress = engine::getParam2<PVOID*>(pCtx);
-        auto pSize = engine::getParam4<PSIZE_T>(pCtx);
-        auto allocType = engine::getParam5<ULONG>(pCtx);
-        auto protection = engine::getParam6<ULONG>(pCtx);
-
         if (engine::detection::isDirectlyCalled(pCtx)) {
+		
+		
+	  auto procHandle = engine::getParam1<HANDLE>(pCtx);
+          auto baseAddress = engine::getParam2<PVOID*>(pCtx);
+          auto pSize = engine::getParam4<PSIZE_T>(pCtx);
+          auto allocType = engine::getParam5<ULONG>(pCtx);
+          auto protection = engine::getParam6<ULONG>(pCtx);
 
-            printf("[!] Detected Suspicious ZwAllocateVirtualMemory Call (NTAPI / Direct Syscall / Indirect Syscall)\n");
-            printf("\tProcess Id: %ld\n\tBase Address: 0x%p\n\tSize: %lld\n\tAllocation Type: %Id\n\tProtection: %I64d\n\n", procHandle, baseAddress, *pSize, allocType, protection);
+          printf("[!] Detected Suspicious ZwAllocateVirtualMemory Call (NTAPI / Direct Syscall / Indirect Syscall)\n");
+          printf("\tProcess Id: %ld\n\tBase Address: 0x%p\n\tSize: %lld\n\tAllocation Type: %Id\n\tProtection: %I64d\n\n", procHandle, baseAddress, *pSize, allocType, protection);
 
         }
         
