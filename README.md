@@ -27,7 +27,6 @@ engine::addHook("ZwOpenProcess", [](PCONTEXT pCtx, PVOID syscallRet) {
 	auto clientId = engine::getParam4<CLIENT_ID*>(pCtx);
 		
 	printf("[*] Detected ZwOpenProcess Call..\n");
-	printf("\tPHandle: 0x%p\n\tAccess Mask: %ld\n\tObject Attributes: 0x%p\n\tProcess Id: %ld\n", pHandle, accessMask, objAttrs,(DWORD)clientId->UniqueProcess);
 
 	if (hasFlag(accessMask, PROCESS_TERMINATE)) {
 		printf("[*] Found PROCESS_TERMINATE Flag, Removing it..\n");
