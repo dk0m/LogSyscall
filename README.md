@@ -7,7 +7,7 @@ Windows x64 System Call Instrumention Engine.
 
 LogSyscall allows you to instrument/hook system calls before they are executed.
 
-It detects transitions from KM to UM using [Instrumention Callbacks](https://github.com/Deputation/instrumentation_callbacks), now that we have the return address we can place a software breakpoint on the ``syscall`` instruction.
+It detects transitions from KM to UM using [Instrumentation Callbacks](https://github.com/Deputation/instrumentation_callbacks), now that we have the return address we can place a software breakpoint on the ``syscall`` instruction.
 
 Before the instrumention callback is even registered, we set up a [Vectored Exception Handler](https://learn.microsoft.com/en-us/windows/win32/debug/vectored-exception-handling/) that will allow us to catch our breakpoint exceptions.
 
